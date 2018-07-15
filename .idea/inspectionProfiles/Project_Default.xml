@@ -1,0 +1,12 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="Eslint" enabled="true" level="ERROR" enabled_by_default="true" />
+    <inspection_tool class="JSEqualityComparisonWithCoercion.TS" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="mySeverity" value="All" />
+    </inspection_tool>
+    <inspection_tool class="TypescriptExplicitMemberType" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="myPreferExplicitLocalVariableTypes" value="true" />
+    </inspection_tool>
+  </profile>
+</component>
