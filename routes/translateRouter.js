@@ -42,28 +42,29 @@ let TranslateRouter = function(app) {
      * @apiName PostTranslateAjax
      * @apiGroup Translate
      *
-     * @apiSuccess {!Entry[]} results   the steps from the source text to the
-     * final translated text
-     *
-     * @apiSuccess {?string} translationId   the generated translation ID
-     * corresponding to the results
-     * - null if isPublic === false
-     * - a string if isPublic === true
+     * @apiSuccess {Translation} translation   the translation results.
+     * - results: the steps from the source text to the final translated text
+     * - translationId: the generated translation ID corresponding to the
+     *   results
+     *   - null if isPublic === false
+     *   - a string if isPublic === true
      *
      * @apiSuccessExample
      *     HTTP/1.1 200 OK
      *     {
-     *         "results": [{
-     *             "langName": "English",
-     *             "text": "hello"
-     *         }, {
-     *             "langName": "Chinese",
-     *             "text": "你好"
-     *         }, {
-     *             "langName": "English",
-     *             "text": "hi"
-     *         }],
-     *         "translationId": "a346fcf2bba4db7e734d8b5c13b82f58"
+     *         "translation": {
+     *             "results": [{
+     *                 "langName": "English",
+     *                 "text": "hello"
+     *             }, {
+     *                 "langName": "Chinese",
+     *                 "text": "你好"
+     *             }, {
+     *                 "langName": "English",
+     *                 "text": "hi"
+     *             }],
+     *             "translationId": "a346fcf2bba4db7e734d8b5c13b82f58"
+     *         }
      *     }
      *
      * @apiUse PostTranslate
@@ -74,8 +75,10 @@ let TranslateRouter = function(app) {
             let translationId = await saveResults(req, results);
 
             res.json({
-                "results": results,
-                "translationId": translationId
+                "translation": {
+                    "results": results,
+                    "translationId": translationId
+                }
             });
         } catch (err) {
             next(err);
@@ -103,16 +106,18 @@ let TranslateRouter = function(app) {
             let results = await computeResults(req);
             let translationId = await saveResults(req, results);
 
-            let text = "";
+            let text = "<!DOCTYPE html><html><head></head><body>";
+            if (translationId !== null) {
+                text += "<p>Share this result by linking to /translations/"
+                    + translationId + "</p>";
+            }
+
             results.forEach(function(obj) {
                 text += "<p><b>" + obj["langName"] + "</b></p>";
                 text += "<p>" + obj["text"] + "</p>";
             });
 
-            if (translationId !== null) {
-                text += "<p>Your results are saved at /translations/"
-                    + translationId + "</p>";
-            }
+            text += "</body></html>";
 
             await emailer.sendMail(req.body.to, SUBJECT, text);
         } catch (err) {
@@ -123,11 +128,11 @@ let TranslateRouter = function(app) {
     async function computeResults(req) {
         switch (req.body.type) {
         case 0:
-            return await translator.customNumber(req.body.text, Number(req.body.options));
+            return await translator.customNumber(req.body.srcText, Number(req.body.options));
         case 1:
-            return await translator.randomPermutation(req.body.text);
+            return await translator.randomPermutation(req.body.srcText);
         case 2:
-            return await translator.customSequence(req.body.text, req.body.options);
+            return await translator.customSequence(req.body.srcText, req.body.options);
         default:
             throw createError(404);
         }

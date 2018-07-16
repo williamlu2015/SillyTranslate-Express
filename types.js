@@ -1,6 +1,6 @@
 /**
  * @typedef {Object} Translation
- * @property {!Entry[]} results
+ * @property {!Entry[]} results   TODO
  * @property {?string} translationId
  */
 

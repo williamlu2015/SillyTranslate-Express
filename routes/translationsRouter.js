@@ -4,7 +4,7 @@ const express = require("express");
 let router = express.Router();
 
 /**
- * @api {get} /api/recentTranslations/:translationId   A translation result.
+ * @api {get} /api/translations/:translationId   A translation result.
  * @apiName GetTranslation
  * @apiGroup Translation
  *
